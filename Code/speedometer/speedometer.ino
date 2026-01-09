@@ -4,6 +4,9 @@
 const int SENSOR1_PIN = 2;  // Erster IR-Sensor (Digital Pin)
 const int SENSOR2_PIN = 3;  // Zweiter IR-Sensor (Digital Pin)
 const int SERVO_PIN = 9;    // Servo Motor Pin
+const int BATTERY_PIN = A0; // Batterie-Spannungsmessung (Analog Pin)
+const int LED_GREEN_PIN = 4; // Grüne LED
+const int LED_RED_PIN = 5;   // Rote LED
 
 // Konstanten
 const float DISTANCE_CM = 10.0;  // Abstand zwischen Sensoren in cm
@@ -11,6 +14,11 @@ const int SERVO_MIN_ANGLE = 30;   // Minimaler Servo-Winkel
 const int SERVO_MAX_ANGLE = 170; // Maximaler Servo-Winkel
 const float MAX_SPEED_KMH = 100.0; // Maximale erwartete Geschwindigkeit in km/h
 const int DEBOUNCE_DELAY = 50; // Entprellzeit in Millisekunden
+
+// Batterie-Konstanten
+const float BATTERY_LOW_VOLTAGE = 3.3;  // Warnung bei 3.3V (Li-Ion fast leer)
+const float BATTERY_FULL_VOLTAGE = 4.2; // Voll geladen
+const unsigned long BATTERY_CHECK_INTERVAL = 5000; // Batterie alle 5 Sekunden prüfen
 
 // Variablen
 Servo speedServo;
@@ -20,6 +28,7 @@ bool sensor1Triggered = false;
 bool measurementActive = false;
 unsigned long lastSensor1Trigger = 0;
 unsigned long lastSensor2Trigger = 0;
+unsigned long lastBatteryCheck = 0;
 
 void setup() {
   // Serial Monitor initialisieren
@@ -27,21 +36,33 @@ void setup() {
   Serial.println("Geschwindigkeitsmessung gestartet");
   Serial.println("Sensorabstand: 10cm");
   Serial.println("Entprellung aktiviert");
+  Serial.println("Battery-Monitoring aktiviert");
   Serial.println("------------------------");
   
   // Pins konfigurieren
   pinMode(SENSOR1_PIN, INPUT);
   pinMode(SENSOR2_PIN, INPUT);
+  pinMode(LED_GREEN_PIN, OUTPUT);
+  pinMode(LED_RED_PIN, OUTPUT);
   
   // Servo initialisieren
   speedServo.attach(SERVO_PIN);
   speedServo.write(30);  // Servo auf 30° setzen
+  
+  // Erste Batterie-Prüfung
+  checkBattery();
   
   delay(1000);
 }
 
 void loop() {
   unsigned long currentTime = millis();
+  
+  // Batterie regelmäßig prüfen
+  if (currentTime - lastBatteryCheck > BATTERY_CHECK_INTERVAL) {
+    checkBattery();
+    lastBatteryCheck = currentTime;
+  }
   
   // Sensor 1 prüfen (Start der Messung) mit Entprellung
   if (digitalRead(SENSOR1_PIN) == LOW && !measurementActive) {
@@ -137,4 +158,31 @@ int calculateServoAngle(float speedKmh) {
   if (angle > SERVO_MAX_ANGLE) angle = SERVO_MAX_ANGLE;
   
   return angle;
+}
+
+// Funktion zur Batterie-Spannungsmessung und LED-Steuerung
+void checkBattery() {
+  // Spannung messen (mit Spannungsteiler 1:1)
+  int sensorValue = analogRead(BATTERY_PIN);
+  
+  // Umrechnung in Volt (Spannungsteiler mit 2x 10kΩ teilt durch 2)
+  float voltage = (sensorValue / 1023.0) * 5.0 * 2.0;
+  
+  // Debug-Ausgabe
+  Serial.print("🔋 Batterie: ");
+  Serial.print(voltage, 2);
+  Serial.print("V");
+  
+  // LED-Status setzen
+  if (voltage < BATTERY_LOW_VOLTAGE) {
+    // Batterie schwach - Rote LED
+    digitalWrite(LED_GREEN_PIN, LOW);
+    digitalWrite(LED_RED_PIN, HIGH);
+    Serial.println(" - ⚠️ BATTERIE SCHWACH!");
+  } else {
+    // Batterie OK - Grüne LED
+    digitalWrite(LED_GREEN_PIN, HIGH);
+    digitalWrite(LED_RED_PIN, LOW);
+    Serial.println(" - ✅ OK");
+  }
 }

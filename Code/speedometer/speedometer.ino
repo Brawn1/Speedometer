@@ -18,7 +18,7 @@ const int DEBOUNCE_DELAY = 50; // Entprellzeit in Millisekunden
 // Batterie-Konstanten
 const float BATTERY_LOW_VOLTAGE = 3.3;  // Warnung bei 3.3V (Li-Ion fast leer)
 const float BATTERY_FULL_VOLTAGE = 4.2; // Voll geladen
-const unsigned long BATTERY_CHECK_INTERVAL = 5000; // Batterie alle 5 Sekunden prüfen
+const unsigned long BATTERY_CHECK_INTERVAL = 30000; // Batterie alle 30 Sekunden prüfen
 
 // Variablen
 Servo speedServo;
@@ -33,11 +33,13 @@ unsigned long lastBatteryCheck = 0;
 void setup() {
   // Serial Monitor initialisieren
   Serial.begin(9600);
-  Serial.println("Geschwindigkeitsmessung gestartet");
-  Serial.println("Sensorabstand: 10cm");
-  Serial.println("Entprellung aktiviert");
-  Serial.println("Battery-Monitoring aktiviert");
-  Serial.println("------------------------");
+  Serial.println(F("Geschwindigkeitsmessung gestartet"));
+  Serial.print(F("Sensorabstand: "));
+  Serial.print(DISTANCE_CM, 0);
+  Serial.println(F(" cm"));
+  Serial.println(F("Entprellung aktiviert"));
+  Serial.println(F("Battery-Monitoring aktiviert"));
+  Serial.println(F("------------------------"));
   
   // Pins konfigurieren
   pinMode(SENSOR1_PIN, INPUT);
@@ -71,7 +73,7 @@ void loop() {
       sensor1Triggered = true;
       measurementActive = true;
       lastSensor1Trigger = currentTime;
-      Serial.println("Sensor 1 ausgelöst - Messung gestartet");
+      Serial.println(F("Sensor 1 ausgelöst - Messung gestartet"));
     }
   }
   
@@ -96,23 +98,23 @@ void loop() {
         float speedMs = (speedCmPerMs * 100.0);
         
         // Ergebnisse ausgeben
-        Serial.println("------------------------");
-        Serial.print("Zeit: ");
+        Serial.println(F("------------------------"));
+        Serial.print(F("Zeit: "));
         Serial.print((timeDiff / 1000.0), 4);
-        Serial.println(" s");
-        Serial.print("Geschwindigkeit: ");
+        Serial.println(F(" s"));
+        Serial.print(F("Geschwindigkeit: "));
         Serial.print(speedKmh, 2);
-        Serial.print(" km/h (");
+        Serial.print(F(" km/h ("));
         Serial.print(speedMs, 4);
-        Serial.println(" m/s)");
-        Serial.println("------------------------");
+        Serial.println(F(" m/s)"));
+        Serial.println(F("------------------------"));
         
         // Servo-Position berechnen und setzen
         int servoAngle = calculateServoAngle(speedKmh);
         speedServo.write(servoAngle);
-        Serial.print("Servo-Position: ");
+        Serial.print(F("Servo-Position: "));
         Serial.print(servoAngle);
-        Serial.println("°");
+        Serial.println(F("°"));
         Serial.println();
         
         // Servo 2 Sekunden anzeigen, dann deaktivieren
@@ -134,7 +136,7 @@ void loop() {
   
   // Timeout: Wenn Sensor 2 nicht innerhalb von 4 Sekunden ausgelöst wird
   if (measurementActive && (currentTime - sensor1Time > 4000)) {
-    Serial.println("Timeout - Messung abgebrochen");
+    Serial.println(F("Timeout - Messung abgebrochen"));
     measurementActive = false;
     sensor1Triggered = false;
     speedServo.write(30);
@@ -169,20 +171,20 @@ void checkBattery() {
   float voltage = (sensorValue / 1023.0) * 5.0 * 2.0;
   
   // Debug-Ausgabe
-  Serial.print("🔋 Batterie: ");
+  Serial.print(F("🔋 Batterie: "));
   Serial.print(voltage, 2);
-  Serial.print("V");
+  Serial.print(F("V"));
   
   // LED-Status setzen
   if (voltage < BATTERY_LOW_VOLTAGE) {
     // Batterie schwach - Rote LED
     digitalWrite(LED_GREEN_PIN, LOW);
     digitalWrite(LED_RED_PIN, HIGH);
-    Serial.println(" - ⚠️ BATTERIE SCHWACH!");
+    Serial.println(F(" - ⚠️ BATTERIE SCHWACH!"));
   } else {
     // Batterie OK - Grüne LED
     digitalWrite(LED_GREEN_PIN, HIGH);
     digitalWrite(LED_RED_PIN, LOW);
-    Serial.println(" - ✅ OK");
+    Serial.println(F(" - ✅ OK"));
   }
 }

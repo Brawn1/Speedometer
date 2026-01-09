@@ -7,9 +7,9 @@ const int SERVO_PIN = 9;    // Servo Motor Pin
 
 // Konstanten
 const float DISTANCE_CM = 10.0;  // Abstand zwischen Sensoren in cm
-const int SERVO_MIN_ANGLE = 0;   // Minimaler Servo-Winkel
-const int SERVO_MAX_ANGLE = 180; // Maximaler Servo-Winkel
-const float MAX_SPEED_KMH = 240.0; // Maximale erwartete Geschwindigkeit in km/h
+const int SERVO_MIN_ANGLE = 30;   // Minimaler Servo-Winkel
+const int SERVO_MAX_ANGLE = 160; // Maximaler Servo-Winkel
+const float MAX_SPEED_KMH = 100.0; // Maximale erwartete Geschwindigkeit in km/h
 
 // Variablen
 Servo speedServo;
@@ -31,7 +31,7 @@ void setup() {
   
   // Servo initialisieren
   speedServo.attach(SERVO_PIN);
-  speedServo.write(0);  // Servo auf 0° setzen
+  speedServo.write(30);  // Servo auf 0° setzen
   
   delay(1000);
 }
@@ -92,7 +92,7 @@ void loop() {
     delay(1000);
     
     // Servo zurücksetzen
-    speedServo.write(0);
+    speedServo.write(30);
   }
   
   // Timeout: Wenn Sensor 2 nicht innerhalb von 5 Sekunden ausgelöst wird

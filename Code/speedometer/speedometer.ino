@@ -9,7 +9,7 @@ const int SERVO_PIN = 9;    // Servo Motor Pin
 const float DISTANCE_CM = 10.0;  // Abstand zwischen Sensoren in cm
 const int SERVO_MIN_ANGLE = 0;   // Minimaler Servo-Winkel
 const int SERVO_MAX_ANGLE = 180; // Maximaler Servo-Winkel
-const float MAX_SPEED_KMH = 20.0; // Maximale erwartete Geschwindigkeit in km/h
+const float MAX_SPEED_KMH = 240.0; // Maximale erwartete Geschwindigkeit in km/h
 
 // Variablen
 Servo speedServo;
@@ -58,20 +58,20 @@ void loop() {
       float speedCmPerMs = DISTANCE_CM / (float)timeDiff;
       
       // Umrechnung in km/h
-      float speedKmh = speedCmPerMs * 3600.0;
+      float speedKmh = (speedCmPerMs) * 360.0;
       
       // Umrechnung in m/s
-      float speedMs = speedCmPerMs * 10.0;
+      float speedMs = (speedCmPerMs * 100.0);
       
       // Ergebnisse ausgeben
       Serial.println("------------------------");
       Serial.print("Zeit: ");
-      Serial.print(timeDiff);
-      Serial.println(" ms");
+      Serial.print((timeDiff / 1000.0), 4);
+      Serial.println(" s");
       Serial.print("Geschwindigkeit: ");
       Serial.print(speedKmh, 2);
       Serial.print(" km/h (");
-      Serial.print(speedMs, 2);
+      Serial.print(speedMs, 4);
       Serial.println(" m/s)");
       Serial.println("------------------------");
       
@@ -96,14 +96,14 @@ void loop() {
   }
   
   // Timeout: Wenn Sensor 2 nicht innerhalb von 5 Sekunden ausgelöst wird
-  if (measurementActive && (millis() - sensor1Time > 5000)) {
+  if (measurementActive && (millis() - sensor1Time > 4000)) {
     Serial.println("Timeout - Messung abgebrochen");
     measurementActive = false;
     sensor1Triggered = false;
     speedServo.write(0);
   }
   
-  delay(10);  // Kleine Verzögerung für Stabilität
+  delay(5);  // Kleine Verzögerung für Stabilität
 }
 
 // Funktion zur Berechnung des Servo-Winkels basierend auf Geschwindigkeit

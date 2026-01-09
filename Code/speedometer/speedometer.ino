@@ -8,7 +8,7 @@ const int SERVO_PIN = 9;    // Servo Motor Pin
 // Konstanten
 const float DISTANCE_CM = 10.0;  // Abstand zwischen Sensoren in cm
 const int SERVO_MIN_ANGLE = 30;   // Minimaler Servo-Winkel
-const int SERVO_MAX_ANGLE = 160; // Maximaler Servo-Winkel
+const int SERVO_MAX_ANGLE = 170; // Maximaler Servo-Winkel
 const float MAX_SPEED_KMH = 100.0; // Maximale erwartete Geschwindigkeit in km/h
 const int DEBOUNCE_DELAY = 50; // Entprellzeit in Millisekunden
 
@@ -69,7 +69,7 @@ void loop() {
         float speedCmPerMs = DISTANCE_CM / (float)timeDiff;
         
         // Umrechnung in km/h
-        float speedKmh = (speedCmPerMs) * 360.0;
+        float speedKmh = (speedCmPerMs) * 3600.0;
         
         // Umrechnung in m/s
         float speedMs = (speedCmPerMs * 100.0);

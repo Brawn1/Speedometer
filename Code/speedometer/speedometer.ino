@@ -92,10 +92,12 @@ void loop() {
         float speedCmPerMs = DISTANCE_CM / (float)timeDiff;
         
         // Umrechnung in km/h
-        float speedKmh = (speedCmPerMs) * 3600.0;
+        // cm/ms * (1m/100cm) * (1000ms/1s) * (3600s/1h) / (1000m/1km) = cm/ms * 36
+        float speedKmh = speedCmPerMs * 36.0;
         
         // Umrechnung in m/s
-        float speedMs = (speedCmPerMs * 100.0);
+        // cm/ms * (1m/100cm) * (1000ms/1s) = cm/ms * 10
+        float speedMs = speedCmPerMs * 10.0;
         
         // Ergebnisse ausgeben
         Serial.println(F("------------------------"));

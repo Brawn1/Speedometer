@@ -14,6 +14,7 @@ const int SERVO_MIN_ANGLE = 30;   // Minimaler Servo-Winkel
 const int SERVO_MAX_ANGLE = 170; // Maximaler Servo-Winkel
 const float MAX_SPEED_KMH = 100.0; // Maximale erwartete Geschwindigkeit in km/h
 const int DEBOUNCE_DELAY = 50; // Entprellzeit in Millisekunden
+const int SERVO_MOVE_DELAY = 500; // Zeit in ms zum Erreichen der Servo-Position
 
 // Batterie-Konstanten
 const float BATTERY_LOW_VOLTAGE = 3.3;  // Warnung bei 3.3V (Li-Ion fast leer)
@@ -147,8 +148,8 @@ void loop() {
 // Funktion zum Zurücksetzen des Servos zur Startposition und Deaktivieren
 void resetServoToStartPosition() {
   speedServo.attach(SERVO_PIN);
-  speedServo.write(30);
-  delay(500);  // Zeit zum Erreichen der Position
+  speedServo.write(SERVO_MIN_ANGLE);
+  delay(SERVO_MOVE_DELAY);  // Zeit zum Erreichen der Position
   speedServo.detach();
 }
 

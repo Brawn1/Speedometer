@@ -50,6 +50,8 @@ void setup() {
   // Servo initialisieren
   speedServo.attach(SERVO_PIN);
   speedServo.write(30);  // Servo auf 30° setzen
+  delay(500);  // Zeit zum Erreichen der Position
+  speedServo.detach();  // Servo deaktivieren bis zur ersten Messung
   
   // Erste Batterie-Prüfung
   checkBattery();
@@ -111,18 +113,22 @@ void loop() {
         
         // Servo-Position berechnen und setzen
         int servoAngle = calculateServoAngle(speedKmh);
+        speedServo.attach(SERVO_PIN);  // Servo aktivieren vor dem Schreiben
         speedServo.write(servoAngle);
         Serial.print(F("Servo-Position: "));
         Serial.print(servoAngle);
         Serial.println(F("°"));
         Serial.println();
         
-        // Servo 2 Sekunden anzeigen, dann deaktivieren
+        // Servo 2 Sekunden anzeigen lassen
         delay(2000);
-        speedServo.detach();  // Servo ausschalten = weniger Rauschen
-        delay(500);
-        speedServo.attach(SERVO_PIN);  // Servo wieder aktivieren
-        speedServo.write(30);  // Zurück zur Startposition
+        
+        // Zurück zur Startposition fahren
+        speedServo.write(30);
+        delay(500);  // Zeit zum Erreichen der Position
+        
+        // Servo komplett deaktivieren bis zur nächsten Messung
+        speedServo.detach();
       }
       
       // Reset für nächste Messung
@@ -139,7 +145,10 @@ void loop() {
     Serial.println(F("Timeout - Messung abgebrochen"));
     measurementActive = false;
     sensor1Triggered = false;
+    speedServo.attach(SERVO_PIN);
     speedServo.write(30);
+    delay(500);  // Zeit zum Erreichen der Position
+    speedServo.detach();
   }
   
   delay(5);  // Kleine Verzögerung für Stabilität

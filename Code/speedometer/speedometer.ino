@@ -14,6 +14,7 @@ const int SERVO_MIN_ANGLE = 30;   // Minimaler Servo-Winkel
 const int SERVO_MAX_ANGLE = 170; // Maximaler Servo-Winkel
 const float MAX_SPEED_KMH = 100.0; // Maximale erwartete Geschwindigkeit in km/h
 const int DEBOUNCE_DELAY = 50; // Entprellzeit in Millisekunden
+const int SERVO_MOVE_DELAY = 500; // Zeit in ms zum Erreichen der Servo-Position
 
 // Batterie-Konstanten
 const float BATTERY_LOW_VOLTAGE = 3.3;  // Warnung bei 3.3V (Li-Ion fast leer)
@@ -47,9 +48,8 @@ void setup() {
   pinMode(LED_GREEN_PIN, OUTPUT);
   pinMode(LED_RED_PIN, OUTPUT);
   
-  // Servo initialisieren
-  speedServo.attach(SERVO_PIN);
-  speedServo.write(30);  // Servo auf 30° setzen
+  // Servo initialisieren und zur Startposition bewegen
+  resetServoToStartPosition();
   
   // Erste Batterie-Prüfung
   checkBattery();
@@ -111,18 +111,18 @@ void loop() {
         
         // Servo-Position berechnen und setzen
         int servoAngle = calculateServoAngle(speedKmh);
+        speedServo.attach(SERVO_PIN);  // Servo aktivieren vor dem Schreiben
         speedServo.write(servoAngle);
         Serial.print(F("Servo-Position: "));
         Serial.print(servoAngle);
         Serial.println(F("°"));
         Serial.println();
         
-        // Servo 2 Sekunden anzeigen, dann deaktivieren
+        // Servo 2 Sekunden anzeigen lassen
         delay(2000);
-        speedServo.detach();  // Servo ausschalten = weniger Rauschen
-        delay(500);
-        speedServo.attach(SERVO_PIN);  // Servo wieder aktivieren
-        speedServo.write(30);  // Zurück zur Startposition
+        
+        // Zurück zur Startposition fahren und Servo deaktivieren
+        resetServoToStartPosition();
       }
       
       // Reset für nächste Messung
@@ -139,10 +139,18 @@ void loop() {
     Serial.println(F("Timeout - Messung abgebrochen"));
     measurementActive = false;
     sensor1Triggered = false;
-    speedServo.write(30);
+    resetServoToStartPosition();
   }
   
   delay(5);  // Kleine Verzögerung für Stabilität
+}
+
+// Funktion zum Zurücksetzen des Servos zur Startposition und Deaktivieren
+void resetServoToStartPosition() {
+  speedServo.attach(SERVO_PIN);
+  speedServo.write(SERVO_MIN_ANGLE);
+  delay(SERVO_MOVE_DELAY);  // Zeit zum Erreichen der Position
+  speedServo.detach();
 }
 
 // Funktion zur Berechnung des Servo-Winkels basierend auf Geschwindigkeit

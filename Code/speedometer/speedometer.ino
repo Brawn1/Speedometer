@@ -12,9 +12,12 @@ const int LED_RED_PIN = 5;   // Rote LED
 const float DISTANCE_CM = 10.0;  // Abstand zwischen Sensoren in cm
 const int SERVO_MIN_ANGLE = 30;   // Minimaler Servo-Winkel
 const int SERVO_MAX_ANGLE = 170; // Maximaler Servo-Winkel
-const float MAX_SPEED_KMH = 180.0; // Maximale erwartete Geschwindigkeit in km/h
+const float MAX_SPEED_KMH = 150.0; // Maximale erwartete Geschwindigkeit in km/h
 const int DEBOUNCE_DELAY = 50; // Entprellzeit in Millisekunden
 const int SERVO_MOVE_DELAY = 500; // Zeit in ms zum Erreichen der Servo-Position
+// multiplikator, für den Servo Ausschlag da es nur ein Spielzeug ist.
+const int SERVO_ANGLE_MULTI = 4;
+
 
 // Batterie-Konstanten
 const float BATTERY_LOW_VOLTAGE = 3.3;  // Warnung bei 3.3V (Li-Ion fast leer)
@@ -167,7 +170,7 @@ int calculateServoAngle(float speedKmh) {
   if (angle < SERVO_MIN_ANGLE) angle = SERVO_MIN_ANGLE;
   if (angle > SERVO_MAX_ANGLE) angle = SERVO_MAX_ANGLE;
   
-  return angle;
+  return (angle * SERVO_ANGLE_MULTI);
 }
 
 // Funktion zur Batterie-Spannungsmessung und LED-Steuerung

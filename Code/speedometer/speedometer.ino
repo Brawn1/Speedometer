@@ -12,7 +12,7 @@ const int LED_RED_PIN = 5;   // Rote LED
 const float DISTANCE_CM = 10.0;  // Abstand zwischen Sensoren in cm
 const int SERVO_MIN_ANGLE = 30;   // Minimaler Servo-Winkel
 const int SERVO_MAX_ANGLE = 170; // Maximaler Servo-Winkel
-const float MAX_SPEED_KMH = 100.0; // Maximale erwartete Geschwindigkeit in km/h
+const float MAX_SPEED_KMH = 30.0; // Maximale erwartete Geschwindigkeit in km/h
 const int DEBOUNCE_DELAY = 50; // Entprellzeit in Millisekunden
 
 // Batterie-Konstanten
@@ -49,12 +49,11 @@ void setup() {
   
   // Servo initialisieren
   speedServo.attach(SERVO_PIN);
-  speedServo.write(30);  // Servo auf 30° setzen
+  delay(1000);
+  speedServo.write(30);  // Servo auf 30° setzen  // Servo auf 30° setzen
   
   // Erste Batterie-Prüfung
   checkBattery();
-  
-  delay(1000);
 }
 
 void loop() {
@@ -118,7 +117,7 @@ void loop() {
         Serial.println();
         
         // Servo 2 Sekunden anzeigen, dann deaktivieren
-        delay(2000);
+        delay(1700);
         speedServo.detach();  // Servo ausschalten = weniger Rauschen
         delay(500);
         speedServo.attach(SERVO_PIN);  // Servo wieder aktivieren

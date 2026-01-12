@@ -47,11 +47,8 @@ void setup() {
   pinMode(LED_GREEN_PIN, OUTPUT);
   pinMode(LED_RED_PIN, OUTPUT);
   
-  // Servo initialisieren
-  speedServo.attach(SERVO_PIN);
-  speedServo.write(30);  // Servo auf 30° setzen
-  delay(500);  // Zeit zum Erreichen der Position
-  speedServo.detach();  // Servo deaktivieren bis zur ersten Messung
+  // Servo initialisieren und zur Startposition bewegen
+  resetServoToStartPosition();
   
   // Erste Batterie-Prüfung
   checkBattery();
@@ -123,12 +120,8 @@ void loop() {
         // Servo 2 Sekunden anzeigen lassen
         delay(2000);
         
-        // Zurück zur Startposition fahren
-        speedServo.write(30);
-        delay(500);  // Zeit zum Erreichen der Position
-        
-        // Servo komplett deaktivieren bis zur nächsten Messung
-        speedServo.detach();
+        // Zurück zur Startposition fahren und Servo deaktivieren
+        resetServoToStartPosition();
       }
       
       // Reset für nächste Messung
@@ -145,13 +138,18 @@ void loop() {
     Serial.println(F("Timeout - Messung abgebrochen"));
     measurementActive = false;
     sensor1Triggered = false;
-    speedServo.attach(SERVO_PIN);
-    speedServo.write(30);
-    delay(500);  // Zeit zum Erreichen der Position
-    speedServo.detach();
+    resetServoToStartPosition();
   }
   
   delay(5);  // Kleine Verzögerung für Stabilität
+}
+
+// Funktion zum Zurücksetzen des Servos zur Startposition und Deaktivieren
+void resetServoToStartPosition() {
+  speedServo.attach(SERVO_PIN);
+  speedServo.write(30);
+  delay(500);  // Zeit zum Erreichen der Position
+  speedServo.detach();
 }
 
 // Funktion zur Berechnung des Servo-Winkels basierend auf Geschwindigkeit

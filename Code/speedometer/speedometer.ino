@@ -15,8 +15,8 @@ const int SERVO_MAX_ANGLE = 170; // Maximaler Servo-Winkel
 const float MAX_SPEED_KMH = 150.0; // Maximale erwartete Geschwindigkeit in km/h
 const int DEBOUNCE_DELAY = 50; // Entprellzeit in Millisekunden
 const int SERVO_MOVE_DELAY = 500; // Zeit in ms zum Erreichen der Servo-Position
-// multiplikator, für den Servo Ausschlag da es nur ein Spielzeug ist.
-const int SERVO_ANGLE_MULTI = 4;
+// multiplikator, für den Servo Ausschlag.
+const int SERVO_ANGLE_MULTI = 3;
 
 
 // Batterie-Konstanten

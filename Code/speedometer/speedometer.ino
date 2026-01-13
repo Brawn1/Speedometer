@@ -23,7 +23,7 @@ const int SERVO_ANGLE_MULTI = 3;
 const float BATTERY_LOW_VOLTAGE = 3.3;  // Warnung bei 3.3V (Li-Ion fast leer)
 const float BATTERY_FULL_VOLTAGE = 4.2; // Voll geladen
 const unsigned long BATTERY_CHECK_INTERVAL = 30000; // Batterie alle 30 Sekunden prüfen
-const float ADC_REFERENCE_VOLTAGE = 5.0; // Arduino Nano ADC Referenzspannung (5V)
+const float ADC_REFERENCE_VOLTAGE = 4.457; // Arduino Nano ADC Referenzspannung (gemessen: 4.457V DC)
 const float VOLTAGE_DIVIDER_RATIO = 2.0; // Spannungsteiler-Verhältnis (R1=10kΩ, R2=10kΩ → Faktor 2)
 const float ADC_MAX_VALUE = 1023.0;      // 10-bit ADC maximaler Wert
 
@@ -183,7 +183,7 @@ void checkBattery() {
   
   // Umrechnung in Volt:
   // 1. (sensorValue / ADC_MAX_VALUE) → Normalisierung auf 0.0-1.0
-  // 2. * ADC_REFERENCE_VOLTAGE → Spannung am ADC-Pin (0-5V)
+  // 2. * ADC_REFERENCE_VOLTAGE → Spannung am ADC-Pin (0-4.457V)
   // 3. * VOLTAGE_DIVIDER_RATIO → Tatsächliche Batteriespannung
   //    (Der Spannungsteiler mit 2x 10kΩ teilt die Spannung durch 2,
   //     daher müssen wir mit 2 multiplizieren um die ursprüngliche Spannung zu erhalten)

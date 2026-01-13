@@ -23,6 +23,9 @@ const int SERVO_ANGLE_MULTI = 3;
 const float BATTERY_LOW_VOLTAGE = 3.3;  // Warnung bei 3.3V (Li-Ion fast leer)
 const float BATTERY_FULL_VOLTAGE = 4.2; // Voll geladen
 const unsigned long BATTERY_CHECK_INTERVAL = 30000; // Batterie alle 30 Sekunden prüfen
+const float ADC_REFERENCE_VOLTAGE = 5.0; // Arduino Nano ADC Referenzspannung (5V)
+const float VOLTAGE_DIVIDER_RATIO = 2.0; // Spannungsteiler-Verhältnis (R1=10kΩ, R2=10kΩ → Faktor 2)
+const float ADC_MAX_VALUE = 1023.0;      // 10-bit ADC maximaler Wert
 
 // Variablen
 Servo speedServo;
@@ -175,11 +178,16 @@ int calculateServoAngle(float speedKmh) {
 
 // Funktion zur Batterie-Spannungsmessung und LED-Steuerung
 void checkBattery() {
-  // Spannung messen (mit Spannungsteiler 1:1)
+  // Spannung messen
   int sensorValue = analogRead(BATTERY_PIN);
   
-  // Umrechnung in Volt (Spannungsteiler mit 2x 10kΩ teilt durch 2)
-  float voltage = (sensorValue / 1023.0) * 5.0 * 2.0;
+  // Umrechnung in Volt:
+  // 1. (sensorValue / ADC_MAX_VALUE) → Normalisierung auf 0.0-1.0
+  // 2. * ADC_REFERENCE_VOLTAGE → Spannung am ADC-Pin (0-5V)
+  // 3. * VOLTAGE_DIVIDER_RATIO → Tatsächliche Batteriespannung
+  //    (Der Spannungsteiler mit 2x 10kΩ teilt die Spannung durch 2,
+  //     daher müssen wir mit 2 multiplizieren um die ursprüngliche Spannung zu erhalten)
+  float voltage = (sensorValue / ADC_MAX_VALUE) * ADC_REFERENCE_VOLTAGE * VOLTAGE_DIVIDER_RATIO;
   
   // Debug-Ausgabe
   Serial.print(F("🔋 Batterie: "));

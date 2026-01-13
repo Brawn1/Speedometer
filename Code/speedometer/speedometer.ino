@@ -16,14 +16,14 @@ const float MAX_SPEED_KMH = 150.0; // Maximale erwartete Geschwindigkeit in km/h
 const int DEBOUNCE_DELAY = 50; // Entprellzeit in Millisekunden
 const int SERVO_MOVE_DELAY = 500; // Zeit in ms zum Erreichen der Servo-Position
 // multiplikator, für den Servo Ausschlag.
-const int SERVO_ANGLE_MULTI = 3;
+const float SERVO_ANGLE_MULTI = 2.6;
 
 
 // Batterie-Konstanten
 const float BATTERY_LOW_VOLTAGE = 3.3;  // Warnung bei 3.3V (Li-Ion fast leer)
 const float BATTERY_FULL_VOLTAGE = 4.2; // Voll geladen
 const unsigned long BATTERY_CHECK_INTERVAL = 30000; // Batterie alle 30 Sekunden prüfen
-const float ADC_REFERENCE_VOLTAGE = 4.457; // Arduino Nano ADC Referenzspannung (gemessen: 4.457V DC)
+const float ADC_REFERENCE_VOLTAGE = 4.600; // Arduino Nano ADC Referenzspannung (gemessen: 4.457V DC)
 const float VOLTAGE_DIVIDER_RATIO = 2.0; // Spannungsteiler-Verhältnis (R1=10kΩ, R2=10kΩ → Faktor 2)
 const float ADC_MAX_VALUE = 1023.0;      // 10-bit ADC maximaler Wert
 
@@ -173,7 +173,7 @@ int calculateServoAngle(float speedKmh) {
   if (angle < SERVO_MIN_ANGLE) angle = SERVO_MIN_ANGLE;
   if (angle > SERVO_MAX_ANGLE) angle = SERVO_MAX_ANGLE;
   
-  return (angle * SERVO_ANGLE_MULTI);
+  return round(float(angle) * SERVO_ANGLE_MULTI);
 }
 
 // Funktion zur Batterie-Spannungsmessung und LED-Steuerung

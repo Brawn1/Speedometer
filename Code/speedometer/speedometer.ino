@@ -180,13 +180,6 @@ int calculateServoAngle(float speedKmh) {
 void checkBattery() {
   // Spannung messen
   int sensorValue = analogRead(BATTERY_PIN);
-  
-  // Umrechnung in Volt:
-  // 1. (sensorValue / ADC_MAX_VALUE) → Normalisierung auf 0.0-1.0
-  // 2. * ADC_REFERENCE_VOLTAGE → Spannung am ADC-Pin (0-4.457V)
-  // 3. * VOLTAGE_DIVIDER_RATIO → Tatsächliche Batteriespannung
-  //    (Der Spannungsteiler mit 2x 10kΩ teilt die Spannung durch 2,
-  //     daher müssen wir mit 2 multiplizieren um die ursprüngliche Spannung zu erhalten)
   float voltage = (sensorValue / ADC_MAX_VALUE) * ADC_REFERENCE_VOLTAGE * VOLTAGE_DIVIDER_RATIO;
   
   // Debug-Ausgabe
